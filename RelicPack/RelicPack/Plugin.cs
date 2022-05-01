@@ -12,12 +12,12 @@ using System.Threading.Tasks;
 namespace RelicPack
 {
     [BepInPlugin(GUID, Name, Version)]
-    [BepInDependency("io.github.crazyjackel.RelicLib", "1.0.2")]
+    [BepInDependency("io.github.crazyjackel.RelicLib", "1.0.3")]
     public class Plugin : BaseUnityPlugin
     {
         public const string GUID = "io.github.crazyjackel.RelicPack";
         public const string Name = "Relic Pack";
-        public const string Version = "1.0.0";
+        public const string Version = "1.0.1";
 
         static Plugin m_plugin;
         public static Plugin myPlugin => m_plugin;
@@ -57,7 +57,7 @@ namespace RelicPack
                     SpriteName = "Azidoazide_Azide",
                 };
                 Azide.SetAssemblyPath(this);
-                RelicRegister.Instance.RegisterRelic(Azide);
+                RelicRegister.RegisterRelic(Azide);
                 LocalizationRegister.ImportTerm(new TermDataModel(Azide.NameTerm)
                 {
                     English = "Azidoazide Azide"

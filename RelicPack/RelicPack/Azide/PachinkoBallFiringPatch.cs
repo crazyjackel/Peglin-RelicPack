@@ -15,7 +15,7 @@ namespace RelicPack.Azide
     {
         public static void Postfix(PachinkoBall __instance, RelicManager ____relicManager, LayerMask ____circleCastLayerMask)
         {
-            if (____relicManager == null || !(__instance.IsFiring() || __instance.IsDummy) || !____relicManager.RelicEffectActive(RelicRegister.Instance["io.github.crazyjackel.azide"])) return;
+            if (____relicManager == null || !(__instance.IsFiring() || __instance.IsDummy) || !____relicManager.RelicEffectActive(RelicRegister.GetCustomRelicEffect("io.github.crazyjackel.azide"))) return;
 
 
             Collider2D[] nearbyPegs = new Collider2D[30];
