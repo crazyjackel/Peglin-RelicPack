@@ -75,6 +75,10 @@
     <Compile Include="Azide\PachinkoBallFiringPatch.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RubyHeart\AddRelicPatch.cs" />
+    <Compile Include="RubyHeart\PlayerHealthDamagePatch.cs" />
+    <Compile Include="RubyHeart\RemoveRelicPatch.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
