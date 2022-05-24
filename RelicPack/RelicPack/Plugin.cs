@@ -1,10 +1,15 @@
 ﻿using BepInEx;
+using BepInEx.Bootstrap;
 using BepInEx.Configuration;
 using HarmonyLib;
 using PeglinRelicLib.Model;
 using PeglinRelicLib.Register;
+using PeglinRelicLib.Utility;
+using RelicPack.Golden_Bracelet;
+using Relics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,12 +18,16 @@ using UnityEngine;
 namespace RelicPack
 {
     [BepInPlugin(GUID, Name, Version)]
-    [BepInDependency("io.github.crazyjackel.RelicLib", "1.0.3")]
+    [BepInDependency("io.github.crazyjackel.RelicLib", "1.0.5")]
     public class Plugin : BaseUnityPlugin
     {
         public const string GUID = "io.github.crazyjackel.RelicPack";
         public const string Name = "Relic Pack";
-        public const string Version = "1.0.1";
+        public const string Version = "1.0.2";
+
+        internal static string m_path;
+        const string m_bundlepath = "relicpack";
+        internal static string BundlePath => Path.Combine(m_path, m_bundlepath);
 
         static Plugin m_plugin;
         public static Plugin myPlugin => m_plugin;
@@ -33,6 +42,23 @@ namespace RelicPack
         public static ConfigEntry<int> Half_Heart_Health;
         public static ConfigEntry<int> Full_Heart_Health;
         public static ConfigEntry<int> Full_Heart_Damage_Reduction;
+
+        public static ConfigEntry<float> Golden_Odds;
+        public static ConfigEntry<float> Golden_Damage_Boost;
+
+        public static ConfigEntry<int> Peglin_Head_Heal;
+
+        #region Preloaded Assets for Internal Use
+        internal static Material GoldenMaterial;
+        #endregion
+        static Plugin()
+        {
+            //Calculate out a BasePath
+            var assembly = typeof(Plugin).Assembly;
+            var uri = new UriBuilder(assembly.CodeBase);
+            m_path = Path.GetDirectoryName(Uri.UnescapeDataString(uri.Path));
+        }
+
 
         void Awake()
         {
@@ -51,6 +77,21 @@ namespace RelicPack
             Full_Heart_Health = Config.Bind("Relic Pack", "Full_Heart_Health", 30, "How Much Maximum Health is gained by a Full Heart (Note Half Hearts Health are Removed)");
             Full_Heart_Damage_Reduction = Config.Bind("Relic Pack", "Full_Heart_Damage_Reduction", 1, "How Much Damage is Lowered per Attack");
             #endregion
+
+            #region Golden Bracelet Config
+            Golden_Odds = Config.Bind("Relic Pack", "Golden_Odds", 0.5f, "Percent of Relic Being Golden after Picking up Golden Bracelet");
+            Golden_Damage_Boost = Config.Bind("Relic Pack", "Golden_Damage_Boost", 1f, "Damage per Golden Relic for Hitting a Golden Peg, Rounds Down to Int");
+            #endregion
+
+            #region Infected Peglin Head Config
+            Peglin_Head_Heal = Config.Bind("Relic Pack", "Peglin_Head_Heal", 30, "Amount to Heal after Almost Dying");
+            #endregion
+
+            AssetBundle bundle = AssetBundle.LoadFromFile(BundlePath);
+
+            GoldenMaterial = bundle.LoadAsset<Material>("GoldenMat");
+
+            bundle.Unload(false);
         }
 
         void OnEnable()
@@ -67,16 +108,8 @@ namespace RelicPack
                     SpriteName = "Azidoazide_Azide",
                 };
                 Azide.SetAssemblyPath(this);
-                RelicRegister.RegisterRelic(Azide);
-                LocalizationRegister.ImportTerm(new TermDataModel(Azide.NameTerm)
-                {
-                    English = "Azidoazide Azide"
-                });
-                string sign = Azide_Bomb_Damage.Value > 0 ? "+" : "";
-                LocalizationRegister.ImportTerm(new TermDataModel(Azide.DescriptionTerm)
-                {
-                    English = $"<sprite name=\"BOMB\"> randomly light up and deal {sign}{Azide_Bomb_Damage.Value} damage."
-                });;
+                RelicRegister.RegisterRelic(Azide, out _);
+
                 #endregion
 
                 #region Full Heart
@@ -90,15 +123,7 @@ namespace RelicPack
                     SpriteName = "LeftHeart"
                 };
                 LeftHeart.SetAssemblyPath(this);
-                RelicRegister.RegisterRelic(LeftHeart);
-                LocalizationRegister.ImportTerm(new TermDataModel(LeftHeart.NameTerm)
-                {
-                    English = "Half Ruby Heart"
-                });
-                LocalizationRegister.ImportTerm(new TermDataModel(LeftHeart.DescriptionTerm)
-                {
-                    English = $"Increases max health by <style=heal>{Half_Heart_Health.Value}</style>. Two will become One."
-                });
+                RelicRegister.RegisterRelic(LeftHeart, out _);
                 #endregion
 
                 #region Right Heart
@@ -110,15 +135,7 @@ namespace RelicPack
                     SpriteName = "RightHeart"
                 };
                 RightHeart.SetAssemblyPath(this);
-                RelicRegister.RegisterRelic(RightHeart); 
-                LocalizationRegister.ImportTerm(new TermDataModel(RightHeart.NameTerm)
-                {
-                    English = "Half Ruby Heart"
-                });
-                LocalizationRegister.ImportTerm(new TermDataModel(RightHeart.DescriptionTerm)
-                {
-                    English = $"Increases max health by <style=heal>{Half_Heart_Health.Value}</style>. Two will become One."
-                });
+                RelicRegister.RegisterRelic(RightHeart, out _);
                 #endregion
 
                 #region Full Heart
@@ -130,25 +147,98 @@ namespace RelicPack
                     SpriteName = "FullHeart"
                 };
                 FullHeart.SetAssemblyPath(this);
-                RelicRegister.RegisterRelic(FullHeart);
-                LocalizationRegister.ImportTerm(new TermDataModel(FullHeart.NameTerm)
-                {
-                    English = "Ruby Heart"
-                });
-                string DamageReduction = (Full_Heart_Damage_Reduction.Value > 0) ? 
-                    $"Damage Taken Decreased by {Full_Heart_Damage_Reduction.Value}" : 
-                        (Full_Heart_Damage_Reduction.Value < 0) ?
-                        $"Damage Taken Increased by {Math.Abs(Full_Heart_Damage_Reduction.Value)}" : "";
-                LocalizationRegister.ImportTerm(new TermDataModel(FullHeart.DescriptionTerm)
-                {
-                    English = $"Increases max health by <style=heal>{Full_Heart_Health.Value}</style>. {DamageReduction}"
-                });
+                RelicRegister.RegisterRelic(FullHeart, out _);
+
                 #endregion
 
                 #endregion
+
+                #region Golden Bracelet
+                RelicDataModel GoldenBracelet = new RelicDataModel("io.github.crazyjackel.goldenBracelet")
+                {
+                    Rarity = RelicRarity.BOSS,
+                    LocalKey = "goldenBracelet",
+                    BundlePath = "relicpack",
+                    SpriteName = "GoldenBracelet"
+                };
+                GoldenBracelet.SetAssemblyPath(this);
+                RelicRegister.RegisterRelic(GoldenBracelet, out _);
+                #endregion
+
+                #region Infected Pegling Head
+                RelicDataModel PeglinHead = new RelicDataModel("io.github.crazyjackel.peglinHead")
+                {
+                    Rarity = RelicRarity.RARE,
+                    LocalKey = "peglinHead",
+                    BundlePath = "relicpack",
+                    SpriteName = "PeglinHead"
+                };
+                PeglinHead.SetAssemblyPath(this);
+                RelicRegister.RegisterRelic(PeglinHead, out _);
+                #endregion
+
+
+                string DamageReduction = (Full_Heart_Damage_Reduction.Value > 0) ?
+                    $"Damage Taken Decreased by {Full_Heart_Damage_Reduction.Value}" :
+                        (Full_Heart_Damage_Reduction.Value < 0) ?
+                        $"Damage Taken Increased by {Math.Abs(Full_Heart_Damage_Reduction.Value)}" : "";
+                string sign = Azide_Bomb_Damage.Value > 0 ? "+" : "";
+
+                LocalizationHelper.ImportTerm(
+                    new TermDataModel(Azide.NameTerm)
+                    {
+                        English = "Azidoazide Azide"
+                    },
+                    new TermDataModel(Azide.DescriptionTerm)
+                    {
+                        English = $"<sprite name=\"BOMB\"> randomly light up and deal {sign}{Azide_Bomb_Damage.Value} damage."
+                    },
+                    new TermDataModel(FullHeart.NameTerm)
+                    {
+                        English = "Ruby Heart"
+                    },
+                    new TermDataModel(FullHeart.DescriptionTerm)
+                    {
+                        English = $"Increases max health by <style=heal>{Full_Heart_Health.Value}</style>. {DamageReduction}"
+                    },
+                    new TermDataModel(GoldenBracelet.NameTerm)
+                    {
+                        English = "Golden Bracelet"
+                    },
+                    new TermDataModel(GoldenBracelet.DescriptionTerm)
+                    {
+                        English = "Make Everything Golden. Everything Made Golden becomes Stronger. Wear at your own Risk!"
+                    },
+                    new TermDataModel(LeftHeart.NameTerm)
+                    {
+                        English = "Half Ruby Heart"
+                    },
+                    new TermDataModel(LeftHeart.DescriptionTerm)
+                    {
+                        English = $"Increases max health by <style=heal>{Half_Heart_Health.Value}</style>. Two will become One."
+                    },
+                    new TermDataModel(PeglinHead.NameTerm)
+                    {
+                        English = "Infected Peglin Head"
+                    },
+                    new TermDataModel(PeglinHead.DescriptionKey)
+                    {
+                        English = $"Extra Life. If you would die, <style=heal>Heal {Peglin_Head_Heal.Value}</style> and become immune for the turn instead."
+                    },
+                    new TermDataModel(RightHeart.NameTerm)
+                    {
+                        English = "Half Ruby Heart"
+                    },
+                    new TermDataModel(RightHeart.DescriptionTerm)
+                    {
+                        English = $"Increases max health by <style=heal>{Half_Heart_Health.Value}</style>. Two will become One."
+                    }
+                );
 
                 patcher.PatchAll();
                 isPatched = true;
+
+                GoldenRelics.Init();
             }
         }
     }

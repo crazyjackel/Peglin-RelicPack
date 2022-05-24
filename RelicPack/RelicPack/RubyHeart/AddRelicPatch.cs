@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using PeglinRelicLib.Register;
+using PeglinRelicLib.Utility;
 using Relics;
 using System;
 using System.Collections.Generic;
@@ -18,24 +19,27 @@ namespace RelicPack.RubyHeart
         public static void Prefix(ref Relic relic, RelicManager __instance, out RelicEffect __state)
         {
             RelicEffect effect = relic.effect;
-            RelicEffect leftHeart = RelicRegister.GetCustomRelicEffect("io.github.crazyjackel.leftHeart");
-            RelicEffect rightHeart = RelicRegister.GetCustomRelicEffect("io.github.crazyjackel.rightHeart");
-            RelicEffect fullHeart = RelicRegister.GetCustomRelicEffect("io.github.crazyjackel.fullHeart");
+            __state = RelicEffect.NONE;
 
-            if(effect == leftHeart && __instance.RelicEffectActive(rightHeart))
+            if (!RelicRegister.TryGetCustomRelicEffect("io.github.crazyjackel.leftHeart", out RelicEffect leftHeart)) return;
+
+            if (!RelicRegister.TryGetCustomRelicEffect("io.github.crazyjackel.rightHeart", out RelicEffect rightHeart)) return;
+
+            if (!RelicRegister.TryGetCustomRelic("io.github.crazyjackel.fullHeart", out Relic fullHeart)) return;
+
+            if (effect == leftHeart && __instance.RelicEffectActive(rightHeart))
             {
                 __state = rightHeart;
-                relic = RelicRegister.GetCustomRelic(fullHeart);
+                relic = fullHeart;
                 return;
             }
+
             if (effect == rightHeart && __instance.RelicEffectActive(leftHeart))
             {
                 __state = leftHeart;
-                relic = RelicRegister.GetCustomRelic(fullHeart);
+                relic = fullHeart;
                 return;
             }
-            __state = RelicEffect.NONE;
-            return;
         }
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
@@ -60,16 +64,20 @@ namespace RelicPack.RubyHeart
             FloatVariable playerHealth = (FloatVariable)AccessTools.Field(typeof(RelicManager), "_playerHealth").GetValue(manager);
             FloatVariable maxPlayerHealth = (FloatVariable)AccessTools.Field(typeof(RelicManager), "_maxPlayerHealth").GetValue(manager);
             RelicEffect effect = relic.effect;
-            if (effect == RelicRegister.GetCustomRelicEffect("io.github.crazyjackel.leftHeart") || effect == RelicRegister.GetCustomRelicEffect("io.github.crazyjackel.rightHeart"))
+
+            if ((RelicRegister.TryGetCustomRelicEffect("io.github.crazyjackel.leftHeart", out RelicEffect leftHeart) && effect == leftHeart) ||
+                (RelicRegister.TryGetCustomRelicEffect("io.github.crazyjackel.rightHeart", out RelicEffect rightHeart) && effect == rightHeart))
             {
                 maxPlayerHealth.Add(Plugin.Half_Heart_Health.Value);
                 playerHealth.Add(Plugin.Half_Heart_Health.Value);
                 return;
             }
-            if (effect == RelicRegister.GetCustomRelicEffect("io.github.crazyjackel.fullHeart"))
+
+            if ((RelicRegister.TryGetCustomRelicEffect("io.github.crazyjackel.fullHeart", out RelicEffect fullHeart) && effect == fullHeart))
             {
                 maxPlayerHealth.Add(Plugin.Full_Heart_Health.Value);
                 playerHealth.Add(Plugin.Full_Heart_Health.Value);
+                return;
             }
         }
     }

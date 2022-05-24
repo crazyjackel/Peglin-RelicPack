@@ -27,9 +27,13 @@ namespace RelicPack.RubyHeart
 
             if (!__state) return;
 
-            RelicEffect leftHeart = RelicRegister.GetCustomRelicEffect("io.github.crazyjackel.leftHeart");
-            RelicEffect rightHeart = RelicRegister.GetCustomRelicEffect("io.github.crazyjackel.rightHeart");
-            RelicEffect fullHeart = RelicRegister.GetCustomRelicEffect("io.github.crazyjackel.fullHeart");
+
+            if (!RelicRegister.TryGetCustomRelicEffect("io.github.crazyjackel.leftHeart", out RelicEffect leftHeart)) return;
+
+            if (!RelicRegister.TryGetCustomRelicEffect("io.github.crazyjackel.rightHeart", out RelicEffect rightHeart)) return;
+
+            if (!RelicRegister.TryGetCustomRelicEffect("io.github.crazyjackel.fullHeart", out RelicEffect fullHeart)) return;
+
             if (re == leftHeart || re == rightHeart)
             {
                 ____maxPlayerHealth.Subtract(Plugin.Half_Heart_Health.Value);

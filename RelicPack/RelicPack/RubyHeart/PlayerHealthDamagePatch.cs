@@ -11,13 +11,12 @@ using UnityEngine;
 
 namespace RelicPack.RubyHeart
 {
-    [HarmonyPatch(typeof(PlayerHealthController),"Damage")]
+    [HarmonyPatch(typeof(PlayerHealthController), "Damage")]
     public class PlayerHealthDamagePatch
     {
         public static void Prefix(ref float damage, RelicManager ____relicManager)
         {
-            RelicEffect fullHeart = RelicRegister.GetCustomRelicEffect("io.github.crazyjackel.fullHeart");
-            if (____relicManager.RelicEffectActive(fullHeart))
+            if (RelicRegister.TryGetCustomRelicEffect("io.github.crazyjackel.fullHeart", out RelicEffect fullHeart) && ____relicManager.RelicEffectActive(fullHeart))
             {
                 damage -= Plugin.Full_Heart_Damage_Reduction.Value;
             }

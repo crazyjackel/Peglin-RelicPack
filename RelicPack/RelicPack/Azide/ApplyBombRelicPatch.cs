@@ -15,7 +15,7 @@ namespace RelicPack.Azide
     {
         public static void Prefix(ref float baseDamage, RelicManager ____relicManager)
         {
-            if (____relicManager.RelicEffectActive(RelicRegister.GetCustomRelicEffect("io.github.crazyjackel.azide")))
+            if (RelicRegister.TryGetCustomRelicEffect("io.github.crazyjackel.azide", out RelicEffect effect) && ____relicManager.RelicEffectActive(effect))
             {
                 baseDamage += Plugin.Azide_Bomb_Damage.Value;
             }
