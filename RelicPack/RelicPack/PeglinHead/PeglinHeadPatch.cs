@@ -31,9 +31,10 @@ namespace RelicPack.PeglinHead
                 damage = 0;
                 return;
             }
-            RelicEffect effect = RelicRegister.GetCustomRelicEffect("io.github.crazyjackel.peglinHead");
-            if (____playerHealth.Value < damage && ____relicManager.RelicEffectActive(effect))
+
+            if (____playerHealth.Value <= damage && RelicRegister.TryGetCustomRelicEffect("io.github.crazyjackel.peglinHead", out RelicEffect effect) && ____relicManager.RelicEffectActive(effect))
             {
+                damage = 0;
                 __instance.Heal(Plugin.Peglin_Head_Heal.Value);
                 ____relicManager.RemoveRelic(effect);
                 ImmuneForTurn = true;
