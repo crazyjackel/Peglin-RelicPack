@@ -1,4 +1,5 @@
-﻿using BepInEx;
+﻿using Battle;
+using BepInEx;
 using BepInEx.Bootstrap;
 using BepInEx.Configuration;
 using HarmonyLib;
@@ -18,12 +19,12 @@ using UnityEngine;
 namespace RelicPack
 {
     [BepInPlugin(GUID, Name, Version)]
-    [BepInDependency("io.github.crazyjackel.RelicLib", "1.0.5")]
+    [BepInDependency("io.github.crazyjackel.RelicLib", "2.0.0")]
     public class Plugin : BaseUnityPlugin
     {
         public const string GUID = "io.github.crazyjackel.RelicPack";
         public const string Name = "Relic Pack";
-        public const string Version = "1.0.2";
+        public const string Version = "2.0.0";
 
         internal static string m_path;
         const string m_bundlepath = "relicpack";
@@ -48,8 +49,11 @@ namespace RelicPack
 
         public static ConfigEntry<int> Peglin_Head_Heal;
 
+        public static ConfigEntry<float> Stop_Light_Percent_Increase;
+
         #region Preloaded Assets for Internal Use
         internal static Material GoldenMaterial;
+        internal static Sprite StopPeg;
         #endregion
         static Plugin()
         {
@@ -87,9 +91,14 @@ namespace RelicPack
             Peglin_Head_Heal = Config.Bind("Relic Pack", "Peglin_Head_Heal", 30, "Amount to Heal after Almost Dying");
             #endregion
 
+            #region Stop Light Config
+            Stop_Light_Percent_Increase = Config.Bind("Relic Pack", "Stop_Light_Percent_Increase", 0.3f, "Damage Percent Increase");
+            #endregion
+
             AssetBundle bundle = AssetBundle.LoadFromFile(BundlePath);
 
             GoldenMaterial = bundle.LoadAsset<Material>("GoldenMat");
+            StopPeg = bundle.LoadAsset<Sprite>("StopPeg");
 
             bundle.Unload(false);
         }
@@ -98,6 +107,8 @@ namespace RelicPack
         {
             if (!isPatched)
             {
+                #region Items
+
                 #region Azide
                 //Created Relic Azidaoazide
                 RelicDataModel Azide = new RelicDataModel("io.github.crazyjackel.azide")
@@ -177,7 +188,45 @@ namespace RelicPack
                 RelicRegister.RegisterRelic(PeglinHead, out _);
                 #endregion
 
+                #region Stop Light
+                RelicDataModel StopLight = new RelicDataModel("io.github.crazyjackel.stopLight")
+                {
+                    Rarity = RelicRarity.RARE,
+                    LocalKey = "stopLight",
+                    BundlePath = "relicpack",
+                    SpriteName = "StopLight"
+                };
+                StopLight.SetAssemblyPath(this);
+                RelicRegister.RegisterRelic(StopLight, out RelicEffect stopLight);
+                #endregion
 
+                #endregion
+
+                #region PegTypes
+
+                #region StopPegType
+                PegTypeDataModel StopPegType = new PegTypeDataModel("io.github.crazyjackel.stopPeg")
+                    .AddSupport<RegularPeg>((peg) =>
+                    {
+                        SpriteRenderer renderer = peg.GetComponent<SpriteRenderer>();
+                        if (renderer == null) return;
+                        renderer.sprite = StopPeg;
+                    })
+                    .AddBoardPegCount((pegManager) => 
+                    {
+                        RelicManager manager = (RelicManager)AccessTools.Field(typeof(PegManager), "_relicManager").GetValue(pegManager);
+                        if(manager != null && manager.RelicEffectActive(stopLight))
+                        {
+                            return 1;
+                        }
+                        return 0;
+                    });
+                PegTypeRegister.RegisterPegType(StopPegType, out _);
+                #endregion
+
+                #endregion
+
+                #region Localization
                 string DamageReduction = (Full_Heart_Damage_Reduction.Value > 0) ?
                     $"Damage Taken Decreased by {Full_Heart_Damage_Reduction.Value}" :
                         (Full_Heart_Damage_Reduction.Value < 0) ?
@@ -212,8 +261,8 @@ namespace RelicPack
                     },
                     new TermDataModel(GoldenBracelet.DescriptionTerm)
                     {
-                        English = "Make Everything Golden. Everything Made Golden becomes Stronger. Wear at your own Risk!",
-                        Chinese = "使一切变金变强。小心佩戴！"
+                        English = "Make Everything Golden. Golden Stuff is Stronger.",
+                        Chinese = "使一切变金变强。"
                     },
                     new TermDataModel(LeftHeart.NameTerm)
                     {
@@ -230,10 +279,20 @@ namespace RelicPack
                         English = "Infected Peglin Head",
                         Chinese = "受感染的佩哥林的头"
                     },
-                    new TermDataModel(PeglinHead.DescriptionKey)
+                    new TermDataModel(PeglinHead.DescriptionTerm)
                     {
-                        English = $"Extra Life. If you would die, <style=heal>Heal {Peglin_Head_Heal.Value}</style> and become immune for the turn instead.",
-                        Chinese = $"额外一条命。当你将要死亡时，<style=heal>恢复{Peglin_Head_Heal.Value}</style>点血量，并且该回合无敌。"
+                        English = $"Extra Life. <style=heal>Heal {Peglin_Head_Heal.Value}</style> on Death.",
+                        Chinese = $"额外一条命。当你将要死亡时，<style=heal>恢复{Peglin_Head_Heal.Value}</style>点血量。"
+                    },
+                    new TermDataModel(StopLight.NameTerm)
+                    {
+                        English = "Stop Light",
+                        Chinese = "禁行指示灯"
+                    },
+                    new TermDataModel(StopLight.DescriptionTerm)
+                    {
+                        English = $"Deal {(int)(Stop_Light_Percent_Increase.Value * 100)}% increased Damage. A Stop Sign appears.",
+                        Chinese = $"额外造成{(int)(Stop_Light_Percent_Increase.Value * 100)}%伤害，但会出现有停止标识的钉子。"
                     },
                     new TermDataModel(RightHeart.NameTerm)
                     {
@@ -246,6 +305,8 @@ namespace RelicPack
                         Chinese = $"增加<style=heal>{Half_Heart_Health.Value}</style>点血量上限。和左半个心脏合成整个心脏。"
                     }
                 );
+
+                #endregion
 
                 patcher.PatchAll();
                 isPatched = true;
