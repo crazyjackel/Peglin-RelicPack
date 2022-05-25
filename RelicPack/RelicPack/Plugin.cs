@@ -187,51 +187,63 @@ namespace RelicPack
                 LocalizationHelper.ImportTerm(
                     new TermDataModel(Azide.NameTerm)
                     {
-                        English = "Azidoazide Azide"
+                        English = "Azidoazide Azide",
+                        Chinese = "危险爆炸物"
                     },
                     new TermDataModel(Azide.DescriptionTerm)
                     {
-                        English = $"<sprite name=\"BOMB\"> randomly light up and deal {sign}{Azide_Bomb_Damage.Value} damage."
+                        English = $"<sprite name=\"BOMB\"> randomly light up and deal {sign}{Azide_Bomb_Damage.Value} damage.",
+                        Chinese = $"随机引爆<sprite name=\"BOMB\">，并对敌人造成{sign}{Azide_Bomb_Damage.Value}点伤害。"
                     },
                     new TermDataModel(FullHeart.NameTerm)
                     {
-                        English = "Ruby Heart"
+                        English = "Ruby Heart",
+                        Chinese = "露比的整个心脏"
                     },
                     new TermDataModel(FullHeart.DescriptionTerm)
                     {
-                        English = $"Increases max health by <style=heal>{Full_Heart_Health.Value}</style>. {DamageReduction}"
+                        English = $"Increases max health by <style=heal>{Full_Heart_Health.Value}</style>. {DamageReduction}",
+                        Chinese = $"增加<style=heal>{Full_Heart_Health.Value}</style>点血量上限。{DamageReduction}"
                     },
                     new TermDataModel(GoldenBracelet.NameTerm)
                     {
-                        English = "Golden Bracelet"
+                        English = "Golden Bracelet",
+                        Chinese = "金手镯"
                     },
                     new TermDataModel(GoldenBracelet.DescriptionTerm)
                     {
-                        English = "Make Everything Golden. Everything Made Golden becomes Stronger. Wear at your own Risk!"
+                        English = "Make Everything Golden. Everything Made Golden becomes Stronger. Wear at your own Risk!",
+                        Chinese = "使一切变金变强。小心佩戴！"
                     },
                     new TermDataModel(LeftHeart.NameTerm)
                     {
-                        English = "Half Ruby Heart"
+                        English = "Half Ruby Heart",
+                        Chinese = "露比的左半个心脏"
                     },
                     new TermDataModel(LeftHeart.DescriptionTerm)
                     {
-                        English = $"Increases max health by <style=heal>{Half_Heart_Health.Value}</style>. Two will become One."
+                        English = $"Increases max health by <style=heal>{Half_Heart_Health.Value}</style>. Two will become One.",
+                        Chinese = $"增加<style=heal>{Half_Heart_Health.Value}</style>点血量上限。和右半个心脏合成整个心脏。"
                     },
                     new TermDataModel(PeglinHead.NameTerm)
                     {
-                        English = "Infected Peglin Head"
+                        English = "Infected Peglin Head",
+                        Chinese = "受感染的佩哥林的头"
                     },
                     new TermDataModel(PeglinHead.DescriptionKey)
                     {
-                        English = $"Extra Life. If you would die, <style=heal>Heal {Peglin_Head_Heal.Value}</style> and become immune for the turn instead."
+                        English = $"Extra Life. If you would die, <style=heal>Heal {Peglin_Head_Heal.Value}</style> and become immune for the turn instead.",
+                        Chinese = $"额外一条命。当你将要死亡时，<style=heal>恢复{Peglin_Head_Heal.Value}</style>点血量，并且该回合无敌。"
                     },
                     new TermDataModel(RightHeart.NameTerm)
                     {
-                        English = "Half Ruby Heart"
+                        English = "Half Ruby Heart",
+                        Chinese = "露比的右半个心脏"
                     },
                     new TermDataModel(RightHeart.DescriptionTerm)
                     {
-                        English = $"Increases max health by <style=heal>{Half_Heart_Health.Value}</style>. Two will become One."
+                        English = $"Increases max health by <style=heal>{Half_Heart_Health.Value}</style>. Two will become One.",
+                        Chinese = $"增加<style=heal>{Half_Heart_Health.Value}</style>点血量上限。和左半个心脏合成整个心脏。"
                     }
                 );
 
