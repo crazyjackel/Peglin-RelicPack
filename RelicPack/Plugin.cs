@@ -19,12 +19,12 @@ using UnityEngine;
 namespace RelicPack
 {
     [BepInPlugin(GUID, Name, Version)]
-    [BepInDependency("io.github.crazyjackel.RelicLib", "2.0.0")]
+    [BepInDependency("io.github.crazyjackel.RelicLib", "2.0.2")]
     public class Plugin : BaseUnityPlugin
     {
         public const string GUID = "io.github.crazyjackel.RelicPack";
         public const string Name = "Relic Pack";
-        public const string Version = "2.0.0";
+        public const string Version = "2.0.2";
 
         internal static string m_path;
         const string m_bundlepath = "relicpack";
@@ -68,6 +68,7 @@ namespace RelicPack
         {
             if (m_plugin != null) Destroy(this);
             m_plugin = this;
+
 
             #region Azide Config
             Azide_Bomb_Percent = Config.Bind("Relic Pack", "Azide_Bomb_Percent", 0.01f, "Percentage of Lighting a non-rigged Bomb while Peg is in the Air.");
