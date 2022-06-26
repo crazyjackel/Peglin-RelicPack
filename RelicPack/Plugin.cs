@@ -243,7 +243,7 @@ namespace RelicPack
                     new TermDataModel(Azide.DescriptionTerm)
                     {
                         English = $"<sprite name=\"BOMB\"> randomly light up and deal {sign}{Azide_Bomb_Damage.Value} damage.",
-                        Chinese = $"随机引爆<sprite name=\"BOMB\">，并对敌人造成{sign}{Azide_Bomb_Damage.Value}点伤害。"
+                        Chinese = $"随机引爆 <sprite name=\"BOMB\"> ，并对敌人造成{sign}{Azide_Bomb_Damage.Value}点伤害。"
                     },
                     new TermDataModel(FullHeart.NameTerm)
                     {
