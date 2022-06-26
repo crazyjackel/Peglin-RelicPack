@@ -20,7 +20,6 @@ namespace RelicPack.Azide
                 !RelicRegister.TryGetCustomRelicEffect("io.github.crazyjackel.azide", out RelicEffect azide) || 
                 !____relicManager.RelicEffectActive(azide)) return;
 
-
             Collider2D[] nearbyPegs = new Collider2D[30];
             Physics2D.defaultPhysicsScene.OverlapCircle(__instance.transform.position, Plugin.Azide_Bomb_Radius.Value, nearbyPegs, ____circleCastLayerMask);
             foreach (Collider2D collider2D in nearbyPegs)
@@ -31,7 +30,7 @@ namespace RelicPack.Azide
                     if (component == null) continue;
                     if (UnityEngine.Random.value < (component.isRigged ? Plugin.Azide_Bomb_Rigged_Percent.Value : Plugin.Azide_Bomb_Percent.Value))
                     {
-                        component.PegHit(false);
+                        component.PegActivated(false);
                     }
                 }
             }

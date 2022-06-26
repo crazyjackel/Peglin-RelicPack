@@ -56,17 +56,6 @@ namespace RelicPack.Golden_Bracelet
             }
         }
     }
-    [HarmonyPatch(typeof(RelicIcon), "RestoreShader")]
-    class MakeRelicRestoreShaderToGolden
-    {
-        public static void Postfix(Relic ___relic, Image ____image)
-        {
-            if (GoldenRelics.IsEffectGolden(___relic.effect))
-            {
-                ____image.material = Plugin.GoldenMaterial;
-            }
-        }
-    }
     [HarmonyPatch(typeof(ChangeAnimSpeedByVertSpeed), "Update")]
     class MakeMapPeglinGoldenPatch
     {
@@ -164,7 +153,7 @@ namespace RelicPack.Golden_Bracelet
         {
             foreach (Type type in PegTypes.Pegs)
             {
-                var method = type.GetMethod("PegHit");
+                var method = type.GetMethod("PegActivated");
                 if (method != null)
                 {
                     yield return method;

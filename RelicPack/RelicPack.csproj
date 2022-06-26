@@ -35,16 +35,16 @@
       <HintPath>..\packages\HarmonyX.2.7.0\lib\net45\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Peglin.GameLibs.0.7.23-r.0\lib\net45\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\packages\Peglin.GameLibs.0.7.28-r.0\lib\net45\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Peglin.GameLibs.0.7.23-r.0\lib\net45\Assembly-CSharp-firstpass.dll</HintPath>
+      <HintPath>..\packages\Peglin.GameLibs.0.7.28-r.0\lib\net45\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
     <Reference Include="BepInEx, Version=5.4.19.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\BepInEx.BaseLib.5.4.19\lib\net35\BepInEx.dll</HintPath>
     </Reference>
     <Reference Include="DOTween, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Peglin.GameLibs.0.7.23-r.0\lib\net45\DOTween.dll</HintPath>
+      <HintPath>..\packages\Peglin.GameLibs.0.7.28-r.0\lib\net45\DOTween.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Cecil, Version=0.11.4.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
       <HintPath>..\packages\Mono.Cecil.0.11.4\lib\net40\Mono.Cecil.dll</HintPath>
@@ -65,7 +65,7 @@
       <HintPath>..\packages\MonoMod.Utils.21.12.13.1\lib\net452\MonoMod.Utils.dll</HintPath>
     </Reference>
     <Reference Include="Peglin.OdinSerializer, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Peglin.GameLibs.0.7.23-r.0\lib\net45\Peglin.OdinSerializer.dll</HintPath>
+      <HintPath>..\packages\Peglin.GameLibs.0.7.28-r.0\lib\net45\Peglin.OdinSerializer.dll</HintPath>
     </Reference>
     <Reference Include="PeglinRelicLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Peglin.PeglinRelicLib.2.0.1-r.0\lib\net472\PeglinRelicLib.dll</HintPath>

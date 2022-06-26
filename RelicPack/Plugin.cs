@@ -19,12 +19,12 @@ using UnityEngine;
 namespace RelicPack
 {
     [BepInPlugin(GUID, Name, Version)]
-    [BepInDependency("io.github.crazyjackel.RelicLib", "2.0.1")]
+    [BepInDependency("io.github.crazyjackel.RelicLib", "2.0.2")]
     public class Plugin : BaseUnityPlugin
     {
         public const string GUID = "io.github.crazyjackel.RelicPack";
         public const string Name = "Relic Pack";
-        public const string Version = "2.0.1";
+        public const string Version = "2.0.2";
 
         internal static string m_path;
         const string m_bundlepath = "relicpack";
@@ -243,7 +243,7 @@ namespace RelicPack
                     new TermDataModel(Azide.DescriptionTerm)
                     {
                         English = $"<sprite name=\"BOMB\"> randomly light up and deal {sign}{Azide_Bomb_Damage.Value} damage.",
-                        Chinese = $"随机引爆<sprite name=\"BOMB\">，并对敌人造成{sign}{Azide_Bomb_Damage.Value}点伤害。"
+                        Chinese = $"随机引爆 <sprite name=\"BOMB\"> ，并对敌人造成{sign}{Azide_Bomb_Damage.Value}点伤害。"
                     },
                     new TermDataModel(FullHeart.NameTerm)
                     {
