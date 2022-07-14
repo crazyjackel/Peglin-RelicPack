@@ -10,4 +10,4 @@ A Collection of Peglin Relics created with Relic Lib. Meant to be a sample for c
 - Stop Light: Damage Multiplier combined with a new PegType that destroys your balls.
 
 Links:
-https://github.com/crazyjackel/Peglin-RelicPac
+https://github.com/crazyjackel/Peglin-RelicPack
